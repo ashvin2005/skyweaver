@@ -9,6 +9,9 @@ export const isSupabaseConfigured =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your_supabase_anon_key';
 
+// Flag to check if database tables are set up (will be set to false initially)
+export const isDatabaseReady = false; // Set this to true once you run the migrations
+
 // Only create client if properly configured, otherwise use null
 export const supabase = isSupabaseConfigured ? 
   createClient<Database>(

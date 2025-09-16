@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
+import { isSupabaseConfigured, isDatabaseReady } from '@/lib/supabase';
 import { Eye, EyeOff, Mail, Lock, User, Github, Chrome, Loader2 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -44,6 +45,11 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: A
   };
 
   const handleProviderSignIn = async (provider: 'google' | 'github') => {
+    if (!isSupabaseConfigured || !isDatabaseReady) {
+      setError('OAuth providers are not available in demo mode. Please use email/password authentication.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -51,7 +57,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: A
       const { error } = await signInWithProvider(provider);
       if (error) throw error;
     } catch (error: any) {
-      setError(error.message);
+      setError(error.message || 'OAuth provider authentication failed. Please try email/password authentication.');
     } finally {
       setLoading(false);
     }
@@ -85,6 +91,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: A
                 ? 'Sign in to continue your cosmic journey' 
                 : 'Start exploring multi-messenger astronomy'}
             </p>
+            {(!isSupabaseConfigured || !isDatabaseReady) && (
+              <div className="mt-3 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                <p className="text-blue-400 text-xs">
+                  Demo Mode: Use any email/password combination to sign in
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Error Message */}
@@ -102,24 +115,30 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: A
           <div className="space-y-3 mb-6">
             <motion.button
               onClick={() => handleProviderSignIn('google')}
-              disabled={loading}
-              className="w-full btn-secondary justify-center space-x-3"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={loading || !isSupabaseConfigured || !isDatabaseReady}
+              className={`w-full btn-secondary justify-center space-x-3 ${
+                !isSupabaseConfigured || !isDatabaseReady ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              whileHover={isSupabaseConfigured ? { scale: 1.02 } : {}}
+              whileTap={isSupabaseConfigured ? { scale: 0.98 } : {}}
             >
               <Chrome className="w-5 h-5" />
               <span>Continue with Google</span>
+              {!isSupabaseConfigured && <span className="text-xs ml-2">(Demo Mode)</span>}
             </motion.button>
             
             <motion.button
               onClick={() => handleProviderSignIn('github')}
-              disabled={loading}
-              className="w-full btn-secondary justify-center space-x-3"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={loading || !isSupabaseConfigured || !isDatabaseReady}
+              className={`w-full btn-secondary justify-center space-x-3 ${
+                !isSupabaseConfigured || !isDatabaseReady ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              whileHover={isSupabaseConfigured ? { scale: 1.02 } : {}}
+              whileTap={isSupabaseConfigured ? { scale: 0.98 } : {}}
             >
               <Github className="w-5 h-5" />
               <span>Continue with GitHub</span>
+              {!isSupabaseConfigured && <span className="text-xs ml-2">(Demo Mode)</span>}
             </motion.button>
           </div>
 
