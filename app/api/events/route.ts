@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
             stats: {
               total_events: events.length,
               ...eventStats,
-              confidence_avg: events.reduce((sum, e) => sum + (e.confidence_score || 0), 0) / events.length
+              confidence_avg: events.reduce((sum: number, e: { confidence_score?: number | null }) => sum + (e.confidence_score || 0), 0) / events.length
             }
           });
         }
