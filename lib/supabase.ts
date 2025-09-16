@@ -68,9 +68,9 @@ export interface EventCorrelation {
 }
 
 // Keep the original database types for reference
-export type DbAstroEvent = Database['public']['Tables']['astrophysical_events']['Row'];
-export type DbAstroEventInsert = Database['public']['Tables']['astrophysical_events']['Insert'];
-export type DbAstroEventUpdate = Database['public']['Tables']['astrophysical_events']['Update'];
+export type DbAstroEvent = Database['public']['Tables']['astro_events']['Row'];
+export type DbAstroEventInsert = Database['public']['Tables']['astro_events']['Insert'];
+export type DbAstroEventUpdate = Database['public']['Tables']['astro_events']['Update'];
 
 export type DbEventCorrelation = Database['public']['Tables']['event_correlations']['Row'];
 export type DbEventCorrelationInsert = Database['public']['Tables']['event_correlations']['Insert'];
