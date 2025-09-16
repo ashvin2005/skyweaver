@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-starlight-700;
+  }
+  
+  body {
+    @apply bg-space-gradient min-h-screen text-starlight-100 font-sans antialiased;
+    background-attachment: fixed;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-starlight-800;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cosmic-600 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-cosmic-500;
+  }
+}
+
+@layer components {
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-starlight-950/20 backdrop-blur-md border border-starlight-700/30;
+  }
+  
+  .glass-strong {
+    @apply bg-starlight-900/40 backdrop-blur-lg border border-starlight-600/40;
+  }
+
+  /* Neon glow effects */
+  .neon-blue {
+    @apply shadow-lg shadow-space-500/50;
+  }
+  
+  .neon-purple {
+    @apply shadow-lg shadow-cosmic-500/50;
+  }
+  
+  .neon-green {
+    @apply shadow-lg shadow-nebula-500/50;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-space-600 to-cosmic-600 hover:from-space-500 hover:to-cosmic-500 
+           text-starlight-50 font-medium px-6 py-2.5 rounded-lg transition-all duration-200 
+           shadow-lg hover:shadow-xl hover:shadow-cosmic-500/25 active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply glass-strong hover:bg-starlight-800/50 text-starlight-200 font-medium px-6 py-2.5 
+           rounded-lg transition-all duration-200 hover:text-starlight-50 active:scale-95;
+  }
+
+  /* Card styles */
+  .card {
+    @apply glass rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+  
+  .card-highlight {
+    @apply glass-strong rounded-xl p-6 shadow-xl shadow-cosmic-500/20 
+           hover:shadow-2xl hover:shadow-cosmic-500/30 transition-all duration-300;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply glass-strong rounded-lg px-4 py-2.5 text-starlight-100 placeholder-starlight-400 
+           border-starlight-600/40 focus:border-cosmic-500 focus:ring-2 focus:ring-cosmic-500/20 
+           transition-all duration-200;
+  }
+
+  /* Custom slider styles */
+  .slider {
+    @apply w-full h-2 bg-starlight-700 rounded-lg appearance-none cursor-pointer;
+  }
+
+  .slider::-webkit-slider-thumb {
+    @apply appearance-none h-5 w-5 rounded-full bg-gradient-to-r from-space-500 to-cosmic-500 
+           cursor-pointer border-2 border-starlight-200 shadow-lg;
+  }
+
+  .slider::-moz-range-thumb {
+    @apply h-5 w-5 rounded-full bg-gradient-to-r from-space-500 to-cosmic-500 
+           cursor-pointer border-2 border-starlight-200 shadow-lg;
+  }
+
+  .slider::-webkit-slider-track {
+    @apply bg-starlight-700 rounded-lg h-2;
+  }
+
+  .slider::-moz-range-track {
+    @apply bg-starlight-700 rounded-lg h-2;
+  }
+
+  /* Loading animation */
+  .loading-dots {
+    @apply inline-flex space-x-1;
+  }
+  
+  .loading-dots > div {
+    @apply w-2 h-2 bg-cosmic-500 rounded-full animate-pulse;
+    animation-delay: calc(var(--i) * 0.1s);
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-cosmic-500/30;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-space-400 to-cosmic-400 bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-green {
+    @apply bg-gradient-to-r from-nebula-400 to-space-400 bg-clip-text text-transparent;
+  }
+  
+  .border-gradient {
+    @apply border border-transparent bg-gradient-to-r from-space-500 to-cosmic-500 bg-clip-border;
+  }
+}
+
+/* Plotly.js custom styling */
+.js-plotly-plot .plotly {
+  @apply rounded-lg;
+}
+
+.js-plotly-plot .modebar {
+  @apply bg-starlight-800/50 backdrop-blur-sm rounded-lg;
+}
+
+.js-plotly-plot .modebar-btn {
+  @apply text-starlight-300 hover:text-starlight-100 hover:bg-starlight-700/50;
+}
+
+/* Custom animations for stars */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+/* Responsive design utilities */
+@media (max-width: 768px) {
+  .mobile-stack {
+    @apply flex flex-col space-y-4;
+  }
+  
+  .mobile-full {
+    @apply w-full;
+  }
+  
+  /* Adjust hero text for mobile */
+  .hero-text {
+    @apply text-3xl md:text-6xl;
+  }
+  
+  /* Mobile-friendly cards */
+  .card, .card-highlight {
+    @apply p-4;
+  }
+  
+  /* Mobile sky map height */
+  .mobile-skymap {
+    @apply min-h-[300px];
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    @apply px-6;
+  }
+}
+
+.slider::-moz-range-track {
+  background: #e5e7eb;
+  border-radius: 5px;
+  height: 8px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
