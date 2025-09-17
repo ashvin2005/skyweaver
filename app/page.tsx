@@ -68,6 +68,7 @@ export default function Home() {
   const [showCorrelationResults, setShowCorrelationResults] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
+  const [correlationError, setCorrelationError] = useState<string | null>(null);
   
   // Filter configuration
   const [currentFilter, setCurrentFilter] = useState<FilterConfig>({
@@ -178,76 +179,35 @@ export default function Home() {
   };
 
   const handleCorrelate = async () => {
-    if (events.length < 2) {
-      showToastMessage('Need at least 2 events to find correlations');
-      return;
-    }
-    
-    setIsLoading(true);
-    setShowCorrelationResults(false);
-    
     try {
-      const response = await fetch('/api/correlate', {
+      setIsLoading(true);
+      setCorrelationError(null);
+      
+      const payload: any = {
+        timeWindowSeconds: currentFilter.maxTimeWindow || 600,
+        angularThresholdDeg: currentFilter.maxAngularSeparation || 1.0,
+        minConfidenceScore: currentFilter.confidenceThreshold || 0.1
+      };
+
+      const res = await fetch('/api/correlate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeWindowSeconds: currentFilter.maxTimeWindow || 600,
-          angularThresholdDeg: currentFilter.maxAngularSeparation || 1.0,
-          minConfidenceScore: currentFilter.confidenceThreshold || 0.1
-        })
+        body: JSON.stringify(payload),
+        cache: 'no-store',
       });
-      
-      const data = await response.json();
-      
-      if (data.correlations) {
-        // Handle different response formats
-        let processedCorrelations = data.correlations;
-        
-        // If we get the simple format from demo mode, map it to the expected format
-        if (data.correlations.length > 0 && data.correlations[0].event1_id) {
-          processedCorrelations = data.correlations.map((corr: any) => ({
-            event1: events.find(e => e.id === corr.event1_id) || { 
-              id: corr.event1_id, 
-              event_id: corr.event1_id,
-              event_type: 'gravitational_wave',
-              source: 'LIGO-Virgo',
-              time_utc: new Date(Date.now() - 3600000).toISOString(),
-              ra: 197.45,
-              dec: -23.38
-            },
-            event2: events.find(e => e.id === corr.event2_id) || {
-              id: corr.event2_id,
-              event_id: corr.event2_id, 
-              event_type: 'gamma_ray_burst',
-              source: 'Fermi-GBM',
-              time_utc: new Date().toISOString(),
-              ra: 198.50,
-              dec: -22.85
-            },
-            timeDiffSeconds: corr.time_diff_seconds,
-            angularSeparationDeg: corr.angular_separation_deg,
-            correlationType: corr.correlation_type || 'temporal',
-            confidenceScore: corr.confidence_score
-          }));
-        }
-        
-        setCorrelationResults(processedCorrelations);
-        setCorrelationSummary(data.summary || {
-          totalEvents: events.length,
-          correlationsFound: processedCorrelations.length,
-          clustersFound: data.clusters?.length || 0
-        });
-        setShowCorrelationResults(true);
-        
-        // Show success notification
-        showToastMessage(`Found ${processedCorrelations.length} correlations among ${events.length} events!`);
-      } else if (data.error) {
-        showToastMessage(`Correlation failed: ${data.error}`);
+
+      const data = await res.json();
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || 'Failed to compute correlations');
       }
-    } catch (error) {
-      console.error('Correlation failed:', error);
-      showToastMessage('Correlation analysis failed. Please try again.');
+
+      setCorrelationResults(Array.isArray(data?.correlations) ? data.correlations : []);
+    } catch (e: any) {
+      console.error('handleCorrelate error:', e?.message || e);
+      setCorrelationResults([]);
+      setCorrelationError(e?.message || 'Unexpected error');
     } finally {
+      setShowCorrelationResults(true);
       setIsLoading(false);
     }
   };
@@ -800,90 +760,14 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {correlationResults.map((correlation, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="glass-strong rounded-xl p-6 hover:shadow-lg hover:shadow-cosmic-500/20 transition-all duration-300"
-                        >
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-cosmic-500 rounded-full"></div>
-                              <h4 className="text-lg font-semibold text-starlight-50">
-                                Correlation #{index + 1}
-                              </h4>
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                correlation.confidenceScore >= 0.7 
-                                  ? 'bg-green-500/20 text-green-400'
-                                  : correlation.confidenceScore >= 0.4
-                                  ? 'bg-yellow-500/20 text-yellow-400'
-                                  : 'bg-orange-500/20 text-orange-400'
-                              }`}>
-                                {(correlation.confidenceScore * 100).toFixed(1)}% confidence
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Event 1 */}
-                            <div className="space-y-2">
-                              <h5 className="font-medium text-starlight-200 flex items-center">
-                                <MapPin className="w-4 h-4 mr-2" />
-                                Event 1: {correlation.event1?.event_type || 'Unknown'}
-                              </h5>
-                              <div className="text-sm text-starlight-400 space-y-1">
-                                <p><strong>ID:</strong> {correlation.event1?.event_id || 'N/A'}</p>
-                                <p><strong>Source:</strong> {correlation.event1?.source || 'N/A'}</p>
-                                <p><strong>Time:</strong> {correlation.event1?.time_utc ? new Date(correlation.event1.time_utc).toLocaleString() : 'N/A'}</p>
-                                <p><strong>Position:</strong> RA {correlation.event1?.ra?.toFixed(2) || 'N/A'}°, Dec {correlation.event1?.dec?.toFixed(2) || 'N/A'}°</p>
-                              </div>
-                            </div>
-
-                            {/* Event 2 */}
-                            <div className="space-y-2">
-                              <h5 className="font-medium text-starlight-200 flex items-center">
-                                <MapPin className="w-4 h-4 mr-2" />
-                                Event 2: {correlation.event2?.event_type || 'Unknown'}
-                              </h5>
-                              <div className="text-sm text-starlight-400 space-y-1">
-                                <p><strong>ID:</strong> {correlation.event2?.event_id || 'N/A'}</p>
-                                <p><strong>Source:</strong> {correlation.event2?.source || 'N/A'}</p>
-                                <p><strong>Time:</strong> {correlation.event2?.time_utc ? new Date(correlation.event2.time_utc).toLocaleString() : 'N/A'}</p>
-                                <p><strong>Position:</strong> RA {correlation.event2?.ra?.toFixed(2) || 'N/A'}°, Dec {correlation.event2?.dec?.toFixed(2) || 'N/A'}°</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Correlation Metrics */}
-                          <div className="mt-4 pt-4 border-t border-starlight-700/30">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                              <div>
-                                <span className="text-starlight-400">Time Difference:</span>
-                                <p className="text-starlight-200 font-medium">
-                                  {correlation.timeDiffSeconds ? 
-                                    (correlation.timeDiffSeconds / 3600).toFixed(2) + ' hours' : 
-                                    'N/A'
-                                  }
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-starlight-400">Angular Separation:</span>
-                                <p className="text-starlight-200 font-medium">
-                                  {correlation.angularSeparationDeg?.toFixed(2) || 'N/A'}°
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-starlight-400">Correlation Type:</span>
-                                <p className="text-starlight-200 font-medium capitalize">
-                                  {correlation.correlationType || 'temporal'}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                      {correlationResults.map((corr, idx) => (
+                <div key={idx} className="card">
+                  <div className="text-sm opacity-80 mb-2">Correlation #{idx + 1}</div>
+                  <pre className="text-xs overflow-auto max-h-64 bg-black/5 p-3 rounded">
+{JSON.stringify(corr, null, 2)}
+                  </pre>
+                </div>
+              ))}
                     </div>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
 import { CorrelationEngine, CorrelationParams } from '@/lib/correlation-engine';
@@ -9,29 +9,31 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabaseAdmin = supabaseUrl && supabaseServiceKey ? 
   createClient<Database>(supabaseUrl, supabaseServiceKey) : null;
 
-export async function POST(request: NextRequest) {
-  // Return demo correlation if Supabase is not configured
-  if (!supabaseAdmin) {
-    return NextResponse.json({
-      correlations: [
-        {
-          id: 'demo-corr-1',
-          event1_id: 'demo-1',
-          event2_id: 'demo-2',
-          correlation_type: 'temporal',
-          confidence_score: 0.75,
-          time_diff_seconds: 3600,
-          angular_separation_deg: 15.2,
-          created_at: new Date().toISOString()
-        }
-      ],
-      total_correlations: 1,
-      processing_time_ms: 50
-    });
-  }
+export const dynamic = 'force-dynamic';
 
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
+    // Return demo correlation if Supabase is not configured
+    if (!supabaseAdmin) {
+      return NextResponse.json({
+        correlations: [
+          {
+            id: 'demo-corr-1',
+            event1_id: 'demo-1',
+            event2_id: 'demo-2',
+            correlation_type: 'temporal',
+            confidence_score: 0.75,
+            time_diff_seconds: 3600,
+            angular_separation_deg: 15.2,
+            created_at: new Date().toISOString()
+          }
+        ],
+        total_correlations: 1,
+        processing_time_ms: 50
+      });
+    }
+
+    const body = await req.json();
     const { 
       timeWindowSeconds = 600, 
       angularThresholdDeg = 1.0, 
@@ -63,63 +65,31 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Run correlation analysis
-    const correlations = CorrelationEngine.correlateEvents(events, {
-      timeWindowSeconds,
-      angularThresholdDeg,
-      minConfidenceScore
-    });
+    // Compute correlations safely regardless of function signature and always await
+    const correlations = await Promise.resolve(
+      (CorrelationEngine as any)?.correlateEvents?.length > 1
+        ? (CorrelationEngine as any).correlateEvents(events, { timeWindowSeconds, angularThresholdDeg, minConfidenceScore })
+        : (CorrelationEngine as any).correlateEvents(events)
+    );
 
-    // Store correlations in database
-    if (correlations.length > 0) {
-      const correlationRecords = correlations.map(corr => ({
-        event1_id: corr.event1.id,
-        event2_id: corr.event2.id,
-        time_diff_seconds: corr.timeDiffSeconds,
-        angular_separation_deg: corr.angularSeparationDeg,
-        correlation_type: corr.correlationType,
-        confidence_score: corr.confidenceScore
-      }));
-
-      const { error: insertError } = await supabaseAdmin
-        .from('event_correlations')
-        .insert(correlationRecords as any);
-
-      if (insertError) {
-        console.error('Failed to store correlations:', insertError);
-        // Continue anyway, just log the error
-      }
-    }
-
-    // Find event clusters
-    const clusters = CorrelationEngine.findEventClusters(correlations);
+    // Compute clusters only if helper exists
+    const clusters = typeof (CorrelationEngine as any).findEventClusters === 'function'
+      ? (CorrelationEngine as any).findEventClusters(correlations)
+      : [];
 
     return NextResponse.json({
-      correlations: correlations.map(corr => ({
-        event1: corr.event1,
-        event2: corr.event2,
-        timeDiffSeconds: corr.timeDiffSeconds,
-        angularSeparationDeg: corr.angularSeparationDeg,
-        correlationType: corr.correlationType,
-        confidenceScore: corr.confidenceScore
-      })),
-      clusters: clusters.map(cluster => ({
-        events: cluster,
-        size: cluster.length
-      })),
-      parameters: {
-        timeWindowSeconds,
-        angularThresholdDeg,
-        minConfidenceScore
-      },
-      summary: {
-        totalEvents: events.length,
-        correlationsFound: correlations.length,
-        clustersFound: clusters.length
-      }
-    });
-  } catch (error) {
-    console.error('Correlation API error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      ok: true,
+      correlations: Array.isArray(correlations) ? correlations : [],
+      count: Array.isArray(correlations) ? correlations.length : 0,
+      clusters,
+      timestamp: Date.now(),
+    }, { status: 200 });
+  } catch (err: any) {
+    console.error('Correlate API error:', err?.message || err);
+    return NextResponse.json({ ok: false, correlations: [], error: err?.message || 'Internal error' }, { status: 500 });
   }
+}
+
+export async function GET(_req: NextRequest) {
+  return NextResponse.json({ ok: true, message: 'Use POST /api/correlate to compute correlations.' }, { status: 200 });
 }
