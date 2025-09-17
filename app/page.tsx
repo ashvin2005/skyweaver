@@ -16,6 +16,7 @@ import AuthModal from '@/components/AuthModal';
 import UserProfile from '@/components/UserProfile';
 import FilterPanel from '@/components/FilterPanel';
 import ExportModal from '@/components/ExportModal';
+import SettingsModal from '@/components/SettingsModal';
 import { 
   Telescope, 
   Zap, 
@@ -59,6 +60,7 @@ export default function Home() {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   
   // Filter configuration
   const [currentFilter, setCurrentFilter] = useState<FilterConfig>({
@@ -193,7 +195,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header onSettingsClick={() => setSettingsModalOpen(true)} />
       
       {/* Configuration Notice */}
 
@@ -511,6 +513,11 @@ export default function Home() {
         onClose={() => setExportModalOpen(false)}
         currentFilter={currentFilter}
         totalEvents={events.length}
+      />
+      
+      <SettingsModal 
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
       />
     </div>
   );

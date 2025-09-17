@@ -81,7 +81,7 @@ export default function Header({ onSettingsClick }: HeaderProps) {
             </motion.button>
             
             <motion.a
-              href="https://github.com"
+              href="https://github.com/ashvin2005/skyweaver"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 glass rounded-lg hover:bg-starlight-700/50 transition-all duration-200"
