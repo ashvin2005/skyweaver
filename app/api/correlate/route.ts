@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     // Return demo correlation if Supabase is not configured
     if (!supabaseAdmin) {
       return NextResponse.json({
+        ok: true,
         correlations: [
           {
             id: 'demo-corr-1',
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
 
     if (!events || events.length < 2) {
       return NextResponse.json({ 
+        ok: true,
         correlations: [], 
         message: 'Need at least 2 events to find correlations' 
       });
