@@ -6,9 +6,11 @@ import { Telescope, Zap, Settings, Github, ExternalLink } from 'lucide-react';
 
 interface HeaderProps {
   onSettingsClick?: () => void;
+  onLiveDataClick?: () => void;
+  isLiveDataEnabled?: boolean;
 }
 
-export default function Header({ onSettingsClick }: HeaderProps) {
+export default function Header({ onSettingsClick, onLiveDataClick, isLiveDataEnabled }: HeaderProps) {
   return (
     <motion.header 
       initial={{ y: -100 }}
@@ -92,12 +94,17 @@ export default function Header({ onSettingsClick }: HeaderProps) {
             </motion.a>
 
             <motion.button
-              className="btn-primary hidden sm:flex items-center space-x-2"
+              onClick={onLiveDataClick}
+              className={`hidden sm:flex items-center space-x-2 transition-all duration-200 ${
+                isLiveDataEnabled 
+                  ? 'btn-primary bg-green-500/20 border-green-500/30 text-green-300 hover:bg-green-500/30' 
+                  : 'btn-secondary'
+              }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Zap className="h-4 w-4" />
-              <span>Live Data</span>
+              <Zap className={`h-4 w-4 ${isLiveDataEnabled ? 'animate-pulse' : ''}`} />
+              <span>{isLiveDataEnabled ? 'Live Data ON' : 'Live Data OFF'}</span>
             </motion.button>
           </div>
         </div>

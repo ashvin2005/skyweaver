@@ -61,6 +61,7 @@ export default function Home() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [showLiveDataNotification, setShowLiveDataNotification] = useState(false);
   
   // Filter configuration
   const [currentFilter, setCurrentFilter] = useState<FilterConfig>({
@@ -161,6 +162,17 @@ export default function Home() {
     setCurrentFilter(newFilter);
   };
 
+  // Handle live data toggle with notification
+  const handleLiveDataToggle = () => {
+    setRealtimeEnabled(!realtimeEnabled);
+    setShowLiveDataNotification(true);
+    
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+      setShowLiveDataNotification(false);
+    }, 3000);
+  };
+
   // Convert correlations to EventPair format for compatibility
   const eventPairs: EventPair[] = correlations.map(corr => ({
     event1: events.find(e => e.id === corr.event1_id) || {} as AstroEvent,
@@ -195,7 +207,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Header onSettingsClick={() => setSettingsModalOpen(true)} />
+      <Header 
+        onSettingsClick={() => setSettingsModalOpen(true)} 
+        onLiveDataClick={handleLiveDataToggle}
+        isLiveDataEnabled={realtimeEnabled}
+      />
       
       {/* Configuration Notice */}
 
@@ -519,6 +535,38 @@ export default function Home() {
         isOpen={settingsModalOpen}
         onClose={() => setSettingsModalOpen(false)}
       />
+
+      {/* Live Data Toggle Notification */}
+      <AnimatePresence>
+        {showLiveDataNotification && (
+          <motion.div 
+            className="fixed top-36 right-4 z-50"
+            initial={{ opacity: 0, x: 20, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.8 }}
+            transition={{ type: "spring", duration: 0.4 }}
+          >
+            <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm border ${
+              realtimeEnabled 
+                ? 'bg-green-500/20 text-green-300 border-green-500/30' 
+                : 'bg-orange-500/20 text-orange-300 border-orange-500/30'
+            }`}>
+              <Zap className={`w-5 h-5 ${realtimeEnabled ? 'animate-pulse' : ''}`} />
+              <div>
+                <div className="font-medium">
+                  Live Data {realtimeEnabled ? 'Enabled' : 'Disabled'}
+                </div>
+                <div className="text-xs opacity-80">
+                  {realtimeEnabled 
+                    ? 'Real-time updates are now active' 
+                    : 'Using cached data only'
+                  }
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
