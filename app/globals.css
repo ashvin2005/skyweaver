@@ -10,7 +10,8 @@
   }
   
   body {
-    @apply bg-gradient-to-br from-gray-50 to-blue-50 text-gray-900;
+    @apply bg-space-gradient min-h-screen text-starlight-100 font-sans antialiased;
+    background-attachment: fixed;
   }
 
   /* Theme overrides for light mode */
@@ -19,184 +20,48 @@
   }
 
   [data-theme="light"] * {
-    @apply border-gray-300 text-gray-900;
+    @apply border-gray-300;
   }
 
+  /* Light theme overrides for specific components */
   [data-theme="light"] .glass {
-    @apply bg-white/70 backdrop-blur-md border border-gray-200/50 text-gray-900;
+    @apply bg-white/70 backdrop-blur-md border border-gray-200/50;
   }
   
   [data-theme="light"] .glass-strong {
-    @apply bg-white/80 backdrop-blur-lg border border-gray-300/60 text-gray-900;
+    @apply bg-white/80 backdrop-blur-lg border border-gray-300/60;
   }
 
   [data-theme="light"] .card {
-    @apply bg-white text-gray-900 shadow-lg;
+    @apply text-gray-900;
   }
 
   [data-theme="light"] .btn-secondary {
-    @apply bg-white text-gray-800 hover:text-blue-700 hover:bg-blue-50 border-gray-300;
-  }
-
-  [data-theme="light"] .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white;
+    @apply text-gray-700 hover:text-gray-900;
   }
 
   [data-theme="light"] .input-field {
-    @apply bg-white text-gray-900 placeholder-gray-500 border-gray-300 focus:border-blue-500 focus:ring-blue-500/20;
+    @apply text-gray-900 placeholder-gray-500 border-gray-300 focus:border-blue-500 focus:ring-blue-500/20;
   }
 
-  [data-theme="light"] .text-starlight-50,
-  [data-theme="light"] .text-starlight-100,
-  [data-theme="light"] .text-starlight-200,
-  [data-theme="light"] .text-starlight-300,
-  [data-theme="light"] .text-starlight-400 {
-    @apply text-gray-900 !important;
+  [data-theme="light"] .toggle {
+    @apply bg-gray-300;
   }
 
-  [data-theme="light"] .text-cosmic-400,
-  [data-theme="light"] .text-cosmic-300,
-  [data-theme="light"] .text-space-400,
-  [data-theme="light"] .text-nebula-400,
-  [data-theme="light"] .text-green-400,
-  [data-theme="light"] .text-blue-400,
-  [data-theme="light"] .text-yellow-400,
-  [data-theme="light"] .text-orange-400 {
-    @apply text-blue-700 !important;
-  }
-
-  [data-theme="light"] .bg-space-800,
-  [data-theme="light"] .bg-space-900,
-  [data-theme="light"] .bg-cosmic-500,
-  [data-theme="light"] .bg-cosmic-400,
-  [data-theme="light"] .bg-nebula-500,
-  [data-theme="light"] .bg-nebula-400 {
-    @apply bg-blue-100 !important;
-  }
-
-  [data-theme="light"] .border-starlight-700,
-  [data-theme="light"] .border-starlight-600,
-  [data-theme="light"] .border-cosmic-500,
-  [data-theme="light"] .border-cosmic-400,
-  [data-theme="light"] .border-nebula-400 {
-    @apply border-gray-300 !important;
-  }
-
-  /* Theme overrides for dark mode */
-  [data-theme="dark"] body {
-    @apply bg-space-gradient min-h-screen text-starlight-100 font-sans antialiased;
-  }
-
-  [data-theme="dark"] * {
-    @apply border-starlight-700 text-starlight-100;
-  }
-
-  [data-theme="dark"] .glass {
-    @apply bg-starlight-950/20 backdrop-blur-md border border-starlight-700/30 text-starlight-100;
-  }
-
-  [data-theme="dark"] .glass-strong {
-    @apply bg-starlight-900/40 backdrop-blur-lg border border-starlight-600/40 text-starlight-100;
-  }
-
-  [data-theme="dark"] .card {
-    @apply glass rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 text-starlight-100;
-  }
-
-  [data-theme="dark"] .btn-secondary {
-    @apply glass-strong hover:bg-starlight-800/50 text-starlight-200 font-medium px-6 py-2.5 rounded-lg transition-all duration-200 hover:text-starlight-50 active:scale-95;
-  }
-
-  [data-theme="dark"] .btn-primary {
-    @apply bg-gradient-to-r from-space-600 to-cosmic-600 hover:from-space-500 hover:to-cosmic-500 text-starlight-50;
-  }
-
-  [data-theme="dark"] .input-field {
-    @apply glass-strong rounded-lg px-4 py-2.5 text-starlight-100 placeholder-starlight-400 border-starlight-600/40 focus:border-cosmic-500 focus:ring-2 focus:ring-cosmic-500/20 transition-all duration-200;
-  }
-
-  [data-theme="dark"] .text-starlight-50,
-  [data-theme="dark"] .text-starlight-100,
-  [data-theme="dark"] .text-starlight-200,
-  [data-theme="dark"] .text-starlight-300,
-  [data-theme="dark"] .text-starlight-400 {
-    @apply text-gray-100 !important;
-  }
-
-  [data-theme="dark"] .text-cosmic-400,
-  [data-theme="dark"] .text-cosmic-300,
-  [data-theme="dark"] .text-space-400,
-  [data-theme="dark"] .text-nebula-400,
-  [data-theme="dark"] .text-green-400,
-  [data-theme="dark"] .text-blue-400,
-  [data-theme="dark"] .text-yellow-400,
-  [data-theme="dark"] .text-orange-400 {
-    @apply text-blue-300 !important;
-  }
-
-  [data-theme="dark"] .bg-space-800,
-  [data-theme="dark"] .bg-space-900,
-  [data-theme="dark"] .bg-cosmic-500,
-  [data-theme="dark"] .bg-cosmic-400,
-  [data-theme="dark"] .bg-nebula-500,
-  [data-theme="dark"] .bg-nebula-400 {
-    @apply bg-blue-900 !important;
-  }
-
-  [data-theme="dark"] .border-starlight-700,
-  [data-theme="dark"] .border-starlight-600,
-  [data-theme="dark"] .border-cosmic-500,
-  [data-theme="dark"] .border-cosmic-400,
-  [data-theme="dark"] .border-nebula-400 {
-    @apply border-gray-700 !important;
-  }
-
-  [data-theme="dark"] .toggle {
-    @apply bg-gray-700;
-  }
-
-  [data-theme="dark"] .toggle:checked {
+  [data-theme="light"] .toggle:checked {
     @apply bg-blue-500;
   }
 
-  [data-theme="dark"] ::-webkit-scrollbar-track {
-    @apply bg-gray-800;
+  [data-theme="light"] ::-webkit-scrollbar-track {
+    @apply bg-gray-200;
   }
   
-  [data-theme="dark"] ::-webkit-scrollbar-thumb {
-    @apply bg-blue-600;
+  [data-theme="light"] ::-webkit-scrollbar-thumb {
+    @apply bg-blue-400;
   }
   
-  [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
     @apply bg-blue-500;
-  }
-
-  [data-theme="dark"] .loading-dots > div {
-    @apply bg-blue-500;
-  }
-
-  [data-theme="dark"] .text-gradient {
-    @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
-  }
-  
-  [data-theme="dark"] .text-gradient-green {
-    @apply bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent;
-  }
-
-  [data-theme="dark"] .hover-glow {
-    @apply hover:shadow-lg hover:shadow-blue-500/30;
-  }
-
-  [data-theme="dark"] .neon-blue {
-    @apply shadow-lg shadow-blue-500/50;
-  }
-  
-  [data-theme="dark"] .neon-purple {
-    @apply shadow-lg shadow-indigo-500/50;
-  }
-  
-  [data-theme="dark"] .neon-green {
-    @apply shadow-lg shadow-green-500/50;
   }
 }
 
@@ -446,114 +311,65 @@
   }
 
   [data-theme="light"] .card {
-    @apply bg-white text-gray-900 shadow-lg;
+    @apply text-gray-900;
   }
 
   [data-theme="light"] .btn-secondary {
-    @apply bg-white text-gray-800 hover:text-blue-700 hover:bg-blue-50 border-gray-300;
-  }
-
-  [data-theme="light"] .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white;
+    @apply text-gray-700 hover:text-gray-900;
   }
 
   [data-theme="light"] .input-field {
-    @apply bg-white text-gray-900 placeholder-gray-500 border-gray-300 focus:border-blue-500 focus:ring-blue-500/20;
+    @apply text-gray-900 placeholder-gray-500 border-gray-300 focus:border-blue-500 focus:ring-blue-500/20;
   }
 
-  [data-theme="light"] .text-starlight-50,
-  [data-theme="light"] .text-starlight-100,
-  [data-theme="light"] .text-starlight-200,
-  [data-theme="light"] .text-starlight-300,
-  [data-theme="light"] .text-starlight-400 {
-    @apply text-gray-900 !important;
+  [data-theme="light"] .toggle {
+    @apply bg-gray-300;
   }
 
-  [data-theme="light"] .text-cosmic-400,
-  [data-theme="light"] .text-cosmic-300,
-  [data-theme="light"] .text-space-400,
-  [data-theme="light"] .text-nebula-400,
-  [data-theme="light"] .text-green-400,
-  [data-theme="light"] .text-blue-400,
-  [data-theme="light"] .text-yellow-400,
-  [data-theme="light"] .text-orange-400 {
-    @apply text-blue-700 !important;
+  [data-theme="light"] .toggle:checked {
+    @apply bg-blue-500;
   }
 
-  [data-theme="light"] .bg-space-800,
-  [data-theme="light"] .bg-space-900,
-  [data-theme="light"] .bg-cosmic-500,
-  [data-theme="light"] .bg-cosmic-400,
-  [data-theme="light"] .bg-nebula-500,
-  [data-theme="light"] .bg-nebula-400 {
-    @apply bg-blue-100 !important;
-  }
-
-  [data-theme="light"] .border-starlight-700,
-  [data-theme="light"] .border-starlight-600,
-  [data-theme="light"] .border-cosmic-500,
-  [data-theme="light"] .border-cosmic-400,
-  [data-theme="light"] .border-nebula-400 {
-    @apply border-gray-300 !important;
-  }
-
-  /* Dark theme overrides for various UI components */
-[data-theme="dark"] .glass {
-    @apply bg-starlight-950/20 backdrop-blur-md border border-starlight-700/30;
+  [data-theme="light"] ::-webkit-scrollbar-track {
+    @apply bg-gray-200;
   }
   
-  [data-theme="dark"] .glass-strong {
-    @apply bg-starlight-900/40 backdrop-blur-lg border border-starlight-600/40;
-  }
-
-  [data-theme="dark"] .card {
-    @apply glass rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300;
+  [data-theme="light"] ::-webkit-scrollbar-thumb {
+    @apply bg-blue-400;
   }
   
-  [data-theme="dark"] .btn-secondary {
-    @apply glass-strong hover:bg-starlight-800/50 text-starlight-200 font-medium px-6 py-2.5 rounded-lg transition-all duration-200 hover:text-starlight-50 active:scale-95;
+  [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    @apply bg-blue-500;
   }
 
-  [data-theme="dark"] .btn-primary {
-    @apply bg-gradient-to-r from-space-600 to-cosmic-600 hover:from-space-500 hover:to-cosmic-500 text-starlight-50;
+  [data-theme="light"] .loading-dots > div {
+    @apply bg-blue-500;
   }
 
-  [data-theme="dark"] .input-field {
-    @apply glass-strong rounded-lg px-4 py-2.5 text-starlight-100 placeholder-starlight-400 border-starlight-600/40 focus:border-cosmic-500 focus:ring-2 focus:ring-cosmic-500/20 transition-all duration-200;
+  [data-theme="light"] .text-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+  }
+  
+  [data-theme="light"] .text-gradient-green {
+    @apply bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent;
   }
 
-  [data-theme="dark"] .text-starlight-50,
-  [data-theme="dark"] .text-starlight-100,
-  [data-theme="dark"] .text-starlight-200,
-  [data-theme="dark"] .text-starlight-300,
-  [data-theme="dark"] .text-starlight-400 {
-    @apply text-gray-100 !important;
+  [data-theme="light"] .btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500;
   }
 
-  [data-theme="dark"] .text-cosmic-400,
-  [data-theme="dark"] .text-cosmic-300,
-  [data-theme="dark"] .text-space-400,
-  [data-theme="dark"] .text-nebula-400,
-  [data-theme="dark"] .text-green-400,
-  [data-theme="dark"] .text-blue-400,
-  [data-theme="dark"] .text-yellow-400,
-  [data-theme="dark"] .text-orange-400 {
-    @apply text-blue-300 !important;
+  [data-theme="light"] .hover-glow {
+    @apply hover:shadow-lg hover:shadow-blue-500/30;
   }
 
-  [data-theme="dark"] .bg-space-800,
-  [data-theme="dark"] .bg-space-900,
-  [data-theme="dark"] .bg-cosmic-500,
-  [data-theme="dark"] .bg-cosmic-400,
-  [data-theme="dark"] .bg-nebula-500,
-  [data-theme="dark"] .bg-nebula-400 {
-    @apply bg-blue-900 !important;
+  [data-theme="light"] .neon-blue {
+    @apply shadow-lg shadow-blue-500/50;
   }
-
-  [data-theme="dark"] .border-starlight-700,
-  [data-theme="dark"] .border-starlight-600,
-  [data-theme="dark"] .border-cosmic-500,
-  [data-theme="dark"] .border-cosmic-400,
-  [data-theme="dark"] .border-nebula-400 {
-    @apply border-gray-700 !important;
+  
+  [data-theme="light"] .neon-purple {
+    @apply shadow-lg shadow-indigo-500/50;
+  }
+  
+  [data-theme="light"] .neon-green {
+    @apply shadow-lg shadow-green-500/50;
   }

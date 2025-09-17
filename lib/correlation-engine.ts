@@ -1,5 +1,4 @@
 import { AstroEvent } from './supabase';
-import { fetchAllAstroEvents, fetchSIMBADObjects } from './astro-fetchers';
 
 export interface CorrelationParams {
   timeWindowSeconds: number;
@@ -73,9 +72,8 @@ export class CorrelationEngine {
   }
 
   // Main correlation function
-  static async correlateEvents({ timeWindowSeconds = 600, angularThresholdDeg = 1.0 }): Promise<EventPair[]> {
-    const events = await fetchAllAstroEvents();
-    const results: EventPair[] = [];
+  static correlateEvents(events: AstroEvent[], params: CorrelationParams): EventPair[] {
+    const correlations: EventPair[] = [];
 
     for (let i = 0; i < events.length; i++) {
       for (let j = i + 1; j < events.length; j++) {
@@ -88,25 +86,17 @@ export class CorrelationEngine {
         );
 
         // Check if events meet correlation criteria
-        if (timeDiff <= timeWindowSeconds && angularSep <= angularThresholdDeg) {
-          const confidenceScore = this.calculateConfidenceScore(timeDiff, angularSep, { timeWindowSeconds, angularThresholdDeg });
+        if (timeDiff <= params.timeWindowSeconds && angularSep <= params.angularThresholdDeg) {
+          const confidenceScore = this.calculateConfidenceScore(timeDiff, angularSep, params);
           
           if (!params.minConfidenceScore || confidenceScore >= params.minConfidenceScore) {
-            // Cross-messenger flag
-            const crossMessenger = event1.source !== event2.source && event1.event_type !== event2.event_type;
-
-            // Nearby objects (optional)
-            const objects = await fetchSIMBADObjects(event1.ra, event1.dec);
-
-            results.push({
+            correlations.push({
               event1,
               event2,
               timeDiffSeconds: timeDiff,
               angularSeparationDeg: angularSep,
               correlationType: this.getCorrelationType(event1, event2),
-              confidenceScore,
-              crossMessenger,
-              nearbyObjects: objects
+              confidenceScore
             });
           }
         }
@@ -114,7 +104,7 @@ export class CorrelationEngine {
     }
 
     // Sort by confidence score (highest first)
-    return results.sort((a, b) => b.confidenceScore - a.confidenceScore);
+    return correlations.sort((a, b) => b.confidenceScore - a.confidenceScore);
   }
 
   // Find event clusters (groups of correlated events)
