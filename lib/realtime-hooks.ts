@@ -22,7 +22,14 @@ export function useRealtimeEvents({
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   useEffect(() => {
-    if (!enabled || !isSupabaseConfigured || !supabase) {
+    // If Supabase is not configured, we're in demo mode - consider it "connected" but in demo mode
+    if (!isSupabaseConfigured) {
+      setIsConnected(true); // Demo mode is always "connected"
+      setError(null);
+      return;
+    }
+
+    if (!enabled || !supabase) {
       if (channelRef.current && supabase) {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;

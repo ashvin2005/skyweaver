@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -25,6 +25,43 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState('general');
+  const [currentTheme, setCurrentTheme] = useState<'dark' | 'light' | 'system'>('dark');
+
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('skyweaver-theme') as 'dark' | 'light' | 'system' || 'dark';
+    setCurrentTheme(savedTheme);
+    applyTheme(savedTheme);
+
+    // Listen for system theme changes when using system preference
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = () => {
+      if (savedTheme === 'system') {
+        applyTheme('system');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+  }, []);
+
+  const applyTheme = (theme: 'dark' | 'light' | 'system') => {
+    const root = document.documentElement;
+    
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      root.setAttribute('data-theme', theme);
+    }
+    
+    localStorage.setItem('skyweaver-theme', theme);
+  };
+
+  const handleThemeChange = (theme: 'dark' | 'light' | 'system') => {
+    setCurrentTheme(theme);
+    applyTheme(theme);
+  };
 
   const tabs = [
     { id: 'general', label: 'General', icon: Settings },
@@ -115,15 +152,29 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             { id: 'system', label: 'System', icon: Monitor }
                           ].map((theme) => {
                             const Icon = theme.icon;
+                            const isSelected = currentTheme === theme.id;
                             return (
                               <motion.button
                                 key={theme.id}
-                                className="flex flex-col items-center p-4 rounded-lg border border-starlight-700/30 hover:border-cosmic-500/50 transition-all duration-200"
+                                onClick={() => handleThemeChange(theme.id as 'dark' | 'light' | 'system')}
+                                className={`flex flex-col items-center p-4 rounded-lg border transition-all duration-200 ${
+                                  isSelected
+                                    ? 'border-cosmic-500 bg-cosmic-500/20 text-cosmic-300'
+                                    : 'border-starlight-700/30 hover:border-cosmic-500/50 text-starlight-300'
+                                }`}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                               >
-                                <Icon className="w-6 h-6 text-starlight-300 mb-2" />
-                                <span className="text-sm text-starlight-300">{theme.label}</span>
+                                <Icon className={`w-6 h-6 mb-2 ${isSelected ? 'text-cosmic-300' : 'text-starlight-300'}`} />
+                                <span className={`text-sm ${isSelected ? 'text-cosmic-300' : 'text-starlight-300'}`}>{theme.label}</span>
+                                {isSelected && (
+                                  <motion.div
+                                    className="mt-1 w-1 h-1 bg-cosmic-400 rounded-full"
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ delay: 0.1 }}
+                                  />
+                                )}
                               </motion.button>
                             );
                           })}
