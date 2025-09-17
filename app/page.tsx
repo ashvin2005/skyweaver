@@ -29,8 +29,7 @@ import {
   Wifi,
   WifiOff,
   User,
-  LogIn,
-  AlertTriangle
+  LogIn
 } from 'lucide-react';
 
 // Dynamically import SkyMap to avoid SSR issues
@@ -197,25 +196,7 @@ export default function Home() {
       <Header />
       
       {/* Configuration Notice */}
-      {!isSupabaseConfigured && (
-        <motion.div 
-          className="fixed top-20 left-4 right-4 z-50"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mx-auto max-w-2xl">
-            <div className="flex items-center space-x-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-              <div>
-                <h3 className="text-yellow-400 font-semibold">Demo Mode</h3>
-                <p className="text-yellow-300 text-sm mt-1">
-                  Configure Supabase credentials in <code className="bg-yellow-400/20 px-1 rounded">.env.local</code> to enable authentication and real-time features.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
+
       
       {/* Real-time Connection Status */}
       <motion.div 

@@ -2,6 +2,8 @@
 
 SkyWeaver is an advanced prototype system for correlating astrophysical events across multiple observational channels. It combines gravitational wave detections, gamma-ray bursts, optical transients, and other multi-messenger astronomy data to identify potentially related cosmic events.
 
+**🚀 Ready to Use: No configuration required! The app works immediately with demo data.**
+
 ## Features
 
 ### Data Collection Layer
@@ -28,12 +30,7 @@ SkyWeaver is an advanced prototype system for correlating astrophysical events a
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 18+ 
-- Supabase account (for database)
-- Modern web browser with JavaScript enabled
-
-### Installation
+### Quick Start (No Configuration Required)
 
 1. Clone the repository:
 ```bash
@@ -46,8 +43,20 @@ cd skyweaver
 npm install
 ```
 
-3. Set up Supabase:
-   - Create a new Supabase project
+3. Start the application:
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) to view the dashboard
+
+**That's it!** The application will automatically load with demo data showcasing various astronomical events.
+
+### Optional: Enable Real-time Features
+
+To enable real-time features and authentication, you can optionally set up Supabase:
+
+1. Create a new Supabase project
    - Click "Connect to Supabase" in the top right of the application
    - The database schema will be automatically created
 
